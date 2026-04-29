@@ -75,4 +75,8 @@ form.addEventListener("submit", (event) => {
   }
 
   formStatus.textContent = "Mesajınız gönderiliyor...";
+  setTimeout(() => {
+  formStatus.textContent = "Mesajınız başarıyla gönderildi.";
+  form.reset();
+}, 1500);
 });
