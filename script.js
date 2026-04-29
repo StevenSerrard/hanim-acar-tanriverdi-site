@@ -66,17 +66,29 @@ const activeObserver = new IntersectionObserver(
 
 sections.forEach((section) => activeObserver.observe(section));
 
-form.addEventListener("submit", (event) => {
-  const action = form.getAttribute("action") || "";
-  if (action.includes("REPLACE_WITH_YOUR_FORM_ID")) {
-    event.preventDefault();
-    formStatus.textContent = "Formun çalışması için Formspree form ID alanını güncellemeniz gerekiyor.";
-    return;
-  }
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const data = new FormData(form);
 
   formStatus.textContent = "Mesajınız gönderiliyor...";
-  setTimeout(() => {
-  formStatus.textContent = "Mesajınız başarıyla gönderildi.";
-  form.reset();
-}, 1500);
+
+  try {
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: data,
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    if (response.ok) {
+      formStatus.textContent = "Mesajınız başarıyla gönderildi.";
+      form.reset();
+    } else {
+      formStatus.textContent = "Bir hata oluştu. Lütfen tekrar deneyin.";
+    }
+  } catch (error) {
+    formStatus.textContent = "Bağlantı hatası. Lütfen tekrar deneyin.";
+  }
 });
